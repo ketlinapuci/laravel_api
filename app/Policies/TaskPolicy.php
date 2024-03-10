@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
+use PhpParser\Node\Stmt\Return_;
 
 class TaskPolicy
 {
@@ -21,7 +22,7 @@ class TaskPolicy
      */
     public function view(User $user, Task $task): bool
     {
-        //
+        return $user->id == $task->user_id;
     }
 
     /**
