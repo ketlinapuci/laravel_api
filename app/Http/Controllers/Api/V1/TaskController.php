@@ -15,8 +15,11 @@ class TaskController extends Controller
      */
     public function index()
     {
-        return TaskResource::collection(Task::with('priority')->get());
-    }
+        $tasks = Task::with('priority')
+            ->handleSort(request()->query('sort_by') ?? 'time')
+            ->get();
+
+        return TaskResource::collection($tasks);    }
 
 //SINCE WE'RE BUILDING API WE DON'T NEED TO DEFINE THE CREATE METHOD SO WE GET RID OF IT
 

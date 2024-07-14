@@ -21,7 +21,13 @@ class TaskController extends Controller
     public function index()
     {
         //return all tasks that belong to current user signed in
-        return TaskResource::collection(auth()->user()->tasks()->get());
+        $userTasks = auth()->user()
+            ->tasks()
+            ->handleSort(request()->query('sort_by') ?? 'time')
+            ->with('priority')
+            ->get();
+
+        return TaskResource::collection($userTasks);
     }
 
 //SINCE WE'RE BUILDING API WE DON'T NEED TO DEFINE THE CREATE METHOD SO WE GET RID OF IT
@@ -33,6 +39,7 @@ class TaskController extends Controller
     {
         //when creating a new task we need to associate the task with the current user
         $task = $request->user()->tasks()->create($request->validated());
+        $task->load('priority');
         return TaskResource::make($task);
 
     }
@@ -42,6 +49,8 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
+        $task->load('priority');
+
         return TaskResource::make($task);
     }
 
@@ -51,6 +60,8 @@ class TaskController extends Controller
     public function update(UpdateTaskRequest $request, Task $task)
     {
         $task->update($request->validated());
+        $task->load('priority');
+
         return TaskResource::make($task);
 
     }
