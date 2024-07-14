@@ -15,7 +15,7 @@ class TaskController extends Controller
      */
     public function index()
     {
-        return TaskResource::collection(Task::all());
+        return TaskResource::collection(Task::with('priority')->get());
     }
 
 //SINCE WE'RE BUILDING API WE DON'T NEED TO DEFINE THE CREATE METHOD SO WE GET RID OF IT
@@ -28,6 +28,7 @@ class TaskController extends Controller
         //Call task model & save incoming request by calling create method & pass the request
         //Create will return the model instance
         $task = Task::create($request->validated());
+        $task->load('priority');
         return TaskResource::make($task);
 
     }
